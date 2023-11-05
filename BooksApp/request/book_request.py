@@ -7,6 +7,7 @@ class BookRequest(BaseModel):
     author: str = Field(min_length=1)
     description: str = Field(min_length=1, max_length=100)
     rating: int = Field(gt=0, lt=6)
+    published_date: int = Field(gt=1900)
 
     class Config: # This is used for set an example of successfull book schema
         json_schema_extra = {
@@ -14,6 +15,7 @@ class BookRequest(BaseModel):
                 'title': 'A new book',
                 'author': 'Edgard Pazos',
                 'description': 'New book',
-                'rating': 5
+                'rating': 5,
+                'published_date': 1994
             }
         }
