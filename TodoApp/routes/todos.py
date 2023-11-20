@@ -77,6 +77,24 @@ async def update_todo(user: user_dependency, db: db_dependecy,
     else:
         raise HTTPException(status_code=404, detail="Todo not found")
 
+
+@route.patch("/todo/complete/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def complete_todo(user: user_dependency, db: db_dependecy, todo_id: int = Path(gt=0)):
+    if user is None:
+        raise HTTPException(status_code=401, detail='Authentication Failed')
+    
+    todo_model = db.query(Todos).filter(Todos.id == todo_id)\
+        .filter(Todos.owner_id == user.get('id')).first()
+    
+    if todo_model is None:
+        raise HTTPException(status_code=404, detail='Todo not found')
+    
+    todo_model.complete = not todo_model.complete
+    db.add(todo_model)
+    db.commit()
+    db.refresh(todo_model)
+    
+
 @route.delete("/todo/delete/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_todo(user: user_dependency, 
                       db: db_dependecy, todo_id: int = Path(gt=0)):
